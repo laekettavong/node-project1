@@ -7,29 +7,11 @@ const http = require('http');
 const https = require('https');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
-const config = require ('./config');
+const config = require ('./lib/config');
 const fs = require('fs');
-const _data = require('./lib/data');
-
-// Testing
-// @TODO delete this
-// _data.create('test', 'newFile', {foo : 'bar'}, (err) => {
-//     console.log('This was the error: ', err);
-// });
-
-// _data.read('test', 'newFile', (err, data) => {
-//     console.log('This was the error: ', err, ' and this was the data: ', data);
-// });
-
-
-// _data.update('test', 'newFile', {fizz : 'buzz'}, (err) => {
-//     console.log('This was the error: ', err);
-// });
-
-_data.delete('test', 'newFile', (err) => {
-    console.log('This was the error: ', err);
-});
-
+const handlers = require('./lib/handlers');
+const Utils = require('./lib/utils');
+const parser = Utils.parser;
 
 // Instantiate the HTTP server
 const httpServer = http.createServer((req, res) => {
@@ -90,12 +72,11 @@ const unifiedServer = (req, res) => {
         let chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
 
         // Construct the data object to senbt to handler
-
         let data = {
                 'trimmedPath' : trimmedPath,
                 'queryString' : queryString,
                 'method' : method,
-                'payload' : buffer
+                'payload' : parser.parseJsonToObject(buffer)
         };
 
         // Route the request to the handler specified in the rounter
@@ -113,27 +94,36 @@ const unifiedServer = (req, res) => {
             res.setHeader('Content-Type', 'application/json')
             res.writeHead(statusCode);
             res.end(payloadString);
-            console.log('Returning this respone: ', statusCode, payloadString);
+            console.log('Returning this response: ', statusCode, payloadString);
         });
 
     });
  
 };
-// Define the handlers
-const handlers = {
-    // Sample handler
-    ping : (data, callback) => {
-        // Callback a HTTP status code, and a payload object
-        callback(406, {name: 'sample handler'});
-    },
-    // Not found handler
-    notFound : (data, callback) => {
-        callback(404);
-    }
-}
-
 
 // Define a request router
 const router = {
-    ping : handlers.ping
+    ping : handlers.ping,
+    users : handlers.users
 };
+
+// Testing
+// @TODO delete this
+//const _data = require('./lib/data');
+
+// _data.create('test', 'newFile', {foo : 'bar'}, (err) => {
+//     console.log('This was the error: ', err);
+// });
+
+// _data.read('test', 'newFile', (err, data) => {
+//     console.log('This was the error: ', err, ' and this was the data: ', data);
+// });
+
+
+// _data.update('test', 'newFile', {fizz : 'buzz'}, (err) => {
+//     console.log('This was the error: ', err);
+// });
+
+// _data.delete('test', 'newFile', (err) => {
+//     console.log('This was the error: ', err);
+// });
