@@ -67,7 +67,6 @@ const unifiedServer = (req, res) => {
 
     req.on('end', () => {
         buffer += decoder.end();
-
         // Choose the handler this request should go to. If one is not found, use the notFound handler
         let chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
 
@@ -75,6 +74,7 @@ const unifiedServer = (req, res) => {
         let data = {
                 'trimmedPath' : trimmedPath,
                 'queryString' : queryString,
+                'headers' : headers,
                 'method' : method,
                 'payload' : parser.parseJsonToObject(buffer)
         };
@@ -104,7 +104,8 @@ const unifiedServer = (req, res) => {
 // Define a request router
 const router = {
     ping : handlers.ping,
-    users : handlers.users
+    users : handlers.users,
+    tokens : handlers.tokens
 };
 
 // Testing
