@@ -10,8 +10,10 @@ const fs = require('fs');
 const StringDecoder = require('string_decoder').StringDecoder;
 const Config = require ('./lib/config');
 const Handlers = require('./lib/handlers');
-//const Utils = require('./lib/utils');
-const Parser = require('./lib/utils').parser;
+const Utils = require('./lib/utils');
+const Parser = Utils.parser;
+
+
 
 // Instantiate the HTTP server
 const httpServer = http.createServer((req, res) => {
@@ -110,23 +112,32 @@ const router = {
 
 };
 
+/*
 // Testing
 // @TODO delete this
-//const _data = require('./lib/data');
+const _data = require('./lib/data');
+const TwilioUtil = Utils.twilio;
 
-// _data.create('test', 'newFile', {foo : 'bar'}, (err) => {
-//     console.log('This was the error: ', err);
-// });
+_data.create('test', 'newFile', {foo : 'bar'}, (err) => {
+    console.log('This was the error: ', err);
+});
 
-// _data.read('test', 'newFile', (err, data) => {
-//     console.log('This was the error: ', err, ' and this was the data: ', data);
-// });
+_data.read('test', 'newFile', (err, data) => {
+    console.log('This was the error: ', err, ' and this was the data: ', data);
+});
 
 
-// _data.update('test', 'newFile', {fizz : 'buzz'}, (err) => {
-//     console.log('This was the error: ', err);
-// });
+_data.update('test', 'newFile', {fizz : 'buzz'}, (err) => {
+    console.log('This was the error: ', err);
+});
 
-// _data.delete('test', 'newFile', (err) => {
-//     console.log('This was the error: ', err);
-// });
+_data.delete('test', 'newFile', (err) => {
+    console.log('This was the error: ', err);
+});
+
+
+
+TwilioUtil.sendSms('4151234567', 'Hello there!', (err) => {
+    console.log('This was the error', err);
+})
+*/
