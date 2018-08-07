@@ -6,12 +6,12 @@
 const http = require('http');
 const https = require('https');
 const url = require('url');
-const StringDecoder = require('string_decoder').StringDecoder;
-const config = require ('./lib/config');
 const fs = require('fs');
-const handlers = require('./lib/handlers');
-const Utils = require('./lib/utils');
-const parser = Utils.parser;
+const StringDecoder = require('string_decoder').StringDecoder;
+const Config = require ('./lib/config');
+const Handlers = require('./lib/handlers');
+//const Utils = require('./lib/utils');
+const Parser = require('./lib/utils').parser;
 
 // Instantiate the HTTP server
 const httpServer = http.createServer((req, res) => {
@@ -19,8 +19,8 @@ const httpServer = http.createServer((req, res) => {
 });
 
 // Start the HTTP server
-httpServer.listen(config.httpPort, () => {
-    console.log(`The server is listening on port ${config.httpPort}`);
+httpServer.listen(Config.httpPort, () => {
+    console.log(`The server is listening on port ${Config.httpPort}`);
 });
 
 const httpsServerOptions = {
@@ -35,8 +35,8 @@ const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
 });
 
 // Start the HTTPS server
-httpsServer.listen(config.httpsPort, () => {
-    console.log(`The server is listening on port ${config.httpsPort}`);
+httpsServer.listen(Config.httpsPort, () => {
+    console.log(`The server is listening on port ${Config.httpsPort}`);
 });
 
 // All the server logic for both HTTP and HTTPS server
@@ -68,7 +68,7 @@ const unifiedServer = (req, res) => {
     req.on('end', () => {
         buffer += decoder.end();
         // Choose the handler this request should go to. If one is not found, use the notFound handler
-        let chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound;
+        let chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : Handlers.notFound;
 
         // Construct the data object to senbt to handler
         let data = {
@@ -76,7 +76,7 @@ const unifiedServer = (req, res) => {
                 'queryString' : queryString,
                 'headers' : headers,
                 'method' : method,
-                'payload' : parser.parseJsonToObject(buffer)
+                'payload' : Parser.parseJsonToObject(buffer)
         };
 
         // Route the request to the handler specified in the rounter
@@ -103,9 +103,11 @@ const unifiedServer = (req, res) => {
 
 // Define a request router
 const router = {
-    ping : handlers.ping,
-    users : handlers.users,
-    tokens : handlers.tokens
+    'ping' : Handlers.ping,
+    'users' : Handlers.users,
+    'tokens' : Handlers.tokens,
+    'checks' : Handlers.checks
+
 };
 
 // Testing
