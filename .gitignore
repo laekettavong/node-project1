@@ -61,4 +61,5 @@ typings/
 .next
 
 *.json
+*.gz.b64
 dev.js
