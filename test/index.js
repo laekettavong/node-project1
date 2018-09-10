@@ -2,17 +2,17 @@
 * Test runner
 */
 
-const Utils = require('./../lib/utils');
-const NumberUtils = Utils.number;
 const Constants = require('./../lib/constants');
 const Colors = Constants.ConsoleColors;
-const assert = require('assert');
+
+// Override the NODE_ENV variable
+process.env.NODE_ENV = 'testing';
 
 // Application logic for the rest runner
-
 const _app = {
     tests : { 
-        unit : {},
+        unit : require('./unit'),
+        api : require('./api')
     },
 
     // Count all the tests
@@ -54,7 +54,8 @@ const _app = {
             console.log('----------END ERROR DETAILS----------');
         }
         console.log('');
-        console.log(`----------\x1b[33mEND TEST REPORT\x1b[0m----------`); 
+        console.log(`----------\x1b[33mEND TEST REPORT\x1b[0m----------`);
+        process.exit(0);
     },
 
     // Run all the tests, collecting the errors and successes
@@ -103,29 +104,6 @@ const _app = {
     }
 }
 
-// Assert that getANumber function is returning a number
-_app.tests.unit['NumberUtils.getANumber should return number'] = (done) => {
-    let val = NumberUtils.getANumber();
-    assert.equal(typeof(val), 'number');
-    done();
-}
-
-// Assert that getANumber function is returning a 1
-_app.tests.unit['NumberUtils.getANumber should return 1'] = (done) => {
-    let val = NumberUtils.getANumber();
-    assert.equal(val, 1);
-    done();
-}
-
-//Assert that getANumber function is returning a 2
-_app.tests.unit['NumberUtils.getANumber should return 2'] = (done) => {
-    let val = NumberUtils.getANumber();
-    assert.equal(val, 2);
-    done();
-}
-
-
-console.log("XXX", _app.tests.unit);
 
 // Run the test
 _app.runTests();
